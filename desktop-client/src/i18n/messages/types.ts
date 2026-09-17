@@ -168,6 +168,11 @@ export interface AppDictionary {
     loading: string
     noSnapshot: string
     empty: string
+    searchLabel: string
+    searchPlaceholder: string
+    clearSearch: string
+    noMatch: (term: string) => string
+    filteredCount: (visible: number, total: number) => string
     descriptionLabel: string
     noDescription: string
     closeDetail: string

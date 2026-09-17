@@ -2542,6 +2542,57 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Home" })).toHaveAttribute("aria-current", "page")
   })
 
+  it("shows only actionable agent targets in the review table Targets column", async () => {
+    mockDesktopClient.refreshSync.mockResolvedValueOnce({
+      ...emptySyncState,
+      pendingUpdates: [
+        {
+          remoteSkillId: "skill-a",
+          name: "Skill A",
+          localVersion: null,
+          localContentHash: null,
+          remoteVersion: "1.0.0",
+          remoteContentHash: "hash-a",
+          reason: "not-installed" as const
+        }
+      ],
+      lastRefreshedAt: "2026-04-17T00:00:00.000Z"
+    })
+    mockDesktopClient.refreshPreDistributionCheck.mockResolvedValueOnce({
+      results: {
+        "skill-a": {
+          codex: {
+            ...defaultAgentDetection.agentStatuses[0],
+            contentComparison: "not-installed" as const
+          },
+          "claude-code": {
+            ...defaultAgentDetection.agentStatuses[1],
+            contentComparison: "installed" as const
+          }
+        }
+      },
+      checkedAt: "2026-04-17T00:00:01.000Z",
+      expiresAt: "2099-04-17T00:00:01.000Z",
+      pendingUpdateFingerprint: "skill-a@1.0.0@hash-a",
+      targetAgentIds: ["codex" as const, "claude-code" as const],
+      totalDurationMs: 1,
+      globalErrors: []
+    })
+
+    render(<App />)
+    fireEvent.click(screen.getByRole("button", { name: "Updates" }))
+
+    await waitFor(() => {
+      expect(
+        within(screen.getByRole("table")).getByText("Codex: Not installed")
+      ).toBeInTheDocument()
+    })
+
+    const reviewTable = within(screen.getByRole("table"))
+    expect(reviewTable.queryByText("Claude Code: Installed")).not.toBeInTheDocument()
+    expect(reviewTable.getByText("1 write target")).toBeInTheDocument()
+  })
+
   describe("Local Skills delete confirmation", () => {
     it("shows delete confirmation dialog when delete button is clicked", async () => {
       render(<App />)

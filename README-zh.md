@@ -101,8 +101,11 @@ SkillDrive 支持向所有主流 AI 编程 Agent 分发技能：
 | **Antigravity** | `~/.gemini/antigravity/skills` | ✅ |
 | **OpenClaw** | `~/.openclaw/skills` | ✅ |
 | **CodeBuddy** | `~/.codebuddy/skills` | ✅ |
+| **WorkBuddy** | `~/.workbuddy/skills` | ✅ |
+| **Hermes Agent** | `~/.hermes/skills` | ✅ |
+| **QwenWork CN** | `~/.qwenworkcn/skills` | ✅ |
 
-> 💡 桌面客户端可自动检测已安装的 Agent，并以「先审核、后分发」的工作流管理技能分发。
+> 💡 桌面客户端可自动检测已安装的 Agent，并以「先审核、后分发」的工作流管理技能分发。各 Agent 的技能目录可在客户端内的路径设置中覆盖。
 
 ---
 
@@ -199,9 +202,7 @@ cd desktop-client
 npm install
 set SKILLDRIVE_API_BASE_URL=http://127.0.0.1:8001
 set SKILLDRIVE_API_TOKEN=ask_live_your_token
-set SKILLDRIVE_CODEX_SKILLS_PATH=%USERPROFILE%\.codex\skills
-set SKILLDRIVE_CLAUDE_CODE_SKILLS_PATH=%USERPROFILE%\.claude\skills
-set SKILLDRIVE_GEMINI_CLI_SKILLS_PATH=%USERPROFILE%\.gemini\skills
+set SKILLDRIVE_POLL_INTERVAL_MS=30000
 npm test
 npm run build
 ```
@@ -349,7 +350,7 @@ skilldrive/
 
 1. **登录** Web 控制台并获取 JWT Access Token
 2. **创建 API Token**：调用 `/api/v1/tokens`
-3. **查询与下载**：使用 API Token 查询 Skill 元数据并调用 `/api/v1/skills/download` 下载指定版本
+3. **查询与下载**：使用 API Token 查询 Skill 元数据并调用 `/api/v1/client/skills/download` 下载指定版本
 4. **处理产物**：在客户端本地按自身运行时策略处理已下载内容
 
 ### 认证流程
@@ -370,7 +371,7 @@ sequenceDiagram
     Client->>API: POST /tokens (创建 API Token)
     API-->>Client: API Token
 
-    Client->>API: GET /api/v1/skills + POST /api/v1/skills/download（API Token）
+    Client->>API: GET /api/v1/skills + POST /api/v1/client/skills/download（API Token）
     API->>DB: 校验 Token 所属用户 + 权限
     API-->>Client: Skill 元数据 + 版本 ZIP
 ```
@@ -437,7 +438,7 @@ sequenceDiagram
 | GET | `/api/v1/skills/cache-policy` | 获取技能缓存策略 |
 | POST | `/api/v1/skills` | 创建新技能 |
 | POST | `/api/v1/skills/upload` | 上传技能 ZIP 包 |
-| POST | `/api/v1/skills/download` | 下载技能包（加密，仅 API Token） |
+| POST | `/api/v1/client/skills/download` | 下载技能包（加密，仅 API Token） |
 | GET | `/api/v1/skills/{id}` | 获取技能详情（仅 API Token） |
 | PUT | `/api/v1/skills/{id}` | 更新技能 |
 | DELETE | `/api/v1/skills/{id}` | 删除技能 |

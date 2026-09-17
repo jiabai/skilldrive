@@ -37,7 +37,8 @@ export const zhCNDictionary = {
       home: "首页",
       localSkills: "全局",
       updates: "更新",
-      projects: "项目"
+      projects: "项目",
+      agentSkills: "Agent 视角"
     },
     bridgeStatus: {
       unavailable: "桌面桥接不可用",
@@ -169,6 +170,11 @@ export const zhCNDictionary = {
     loading: "正在加载本地 SKILL...",
     noSnapshot: "尚未刷新本地 SKILL 库存。",
     empty: "没有发现本地 SKILL 包根目录。",
+    searchLabel: "搜索本地 SKILL",
+    searchPlaceholder: "按名称、路径或来源客户端搜索",
+    clearSearch: "清除搜索",
+    noMatch: (term: string) => `没有匹配“${term}”的本地 SKILL。`,
+    filteredCount: (visible: number, total: number) => `共 ${total} 个，匹配 ${visible} 个`,
     descriptionLabel: "描述",
     noDescription: "暂无描述",
     closeDetail: "关闭详情",

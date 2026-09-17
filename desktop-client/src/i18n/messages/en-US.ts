@@ -37,7 +37,8 @@ export const enUSDictionary = {
       home: "Home",
       localSkills: "Local Skills",
       updates: "Updates",
-      projects: "Projects"
+      projects: "Projects",
+      agentSkills: "Agent view"
     },
     bridgeStatus: {
       unavailable: "Desktop bridge unavailable",
@@ -174,6 +175,11 @@ export const enUSDictionary = {
     loading: "Loading local skills...",
     noSnapshot: "Local skill inventory has not been refreshed yet.",
     empty: "No local skill package roots were found.",
+    searchLabel: "Search local skills",
+    searchPlaceholder: "Search by name, path, or agent",
+    clearSearch: "Clear search",
+    noMatch: (term: string) => `No local skill matches "${term}".`,
+    filteredCount: (visible: number, total: number) => `${visible} of ${total} local skills`,
     descriptionLabel: "Description",
     noDescription: "No description",
     closeDetail: "Close detail",

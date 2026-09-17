@@ -1,4 +1,5 @@
 import type {
+  AgentPreDistributionCheckResult,
   PendingSyncUpdate,
   PreDistributionCheckSnapshot,
   PreDistributionContentComparison
@@ -64,22 +65,31 @@ function getComparisonStatusLabel(
   return labels[comparison]
 }
 
+/**
+ * Results whose content already matches remote. Distribution skips these
+ * targets, so they are noise in the review table and stay out of the list.
+ */
+function getWriteTargetResults(results: AgentPreDistributionCheckResult[]) {
+  return results.filter((result) => result.contentComparison !== "installed")
+}
+
 function getTargetSummary(
-  pendingUpdate: PendingSyncUpdate,
-  snapshot: PreDistributionCheckSnapshot | null,
-  isStale: boolean,
+  checkedResults: AgentPreDistributionCheckResult[],
+  writeTargetResults: AgentPreDistributionCheckResult[],
   refreshNeededLabel: string,
   comparisonLabels: ReturnType<typeof useI18n>["dictionary"]["preDistributionCheck"]["comparisonStatusLabels"]
 ) {
-  const results = getPreDistributionCheckResults(pendingUpdate, snapshot, isStale)
-
-  if (results.length === 0) {
+  if (checkedResults.length === 0) {
     return <span className="muted">{refreshNeededLabel}</span>
+  }
+
+  if (writeTargetResults.length === 0) {
+    return null
   }
 
   return (
     <span className="review-table__target-list">
-      {results.map((result) => (
+      {writeTargetResults.map((result) => (
         <span key={result.agentId}>
           {result.displayName}: {getComparisonStatusLabel(result.contentComparison, comparisonLabels)}
         </span>
@@ -377,7 +387,18 @@ export function UpdatesReviewWorkspace({
                         pendingUpdate.reason === "not-installed"
                           ? pendingCopy.reasonLabels.missingLocalRecord
                           : pendingCopy.reasonLabels.versionMismatch
-                      const targetCount = preDistributionCheckSnapshot?.targetAgentIds.length ?? 0
+                      const targetResults = getPreDistributionCheckResults(
+                        pendingUpdate,
+                        preDistributionCheckSnapshot,
+                        isPreDistributionCheckStale
+                      )
+                      const writeTargetResults = getWriteTargetResults(targetResults)
+                      // Installed targets are never written to, so they are excluded from the count.
+                      // Fall back to the configured target count when no check result exists yet.
+                      const displayTargetCount =
+                        targetResults.length > 0
+                          ? writeTargetResults.length
+                          : (preDistributionCheckSnapshot?.targetAgentIds.length ?? 0)
 
                       return (
                         <tr
@@ -425,11 +446,10 @@ export function UpdatesReviewWorkspace({
                           </td>
                           <td className="review-table__cell" data-label={copy.columns.targets}>
                             <div className="review-table__targets">
-                              <strong>{copy.writeTargets(targetCount)}</strong>
+                              <strong>{copy.writeTargets(displayTargetCount)}</strong>
                               {getTargetSummary(
-                                pendingUpdate,
-                                preDistributionCheckSnapshot,
-                                isPreDistributionCheckStale,
+                                targetResults,
+                                writeTargetResults,
                                 precheckCopy.refreshNeeded,
                                 precheckCopy.comparisonStatusLabels
                               )}

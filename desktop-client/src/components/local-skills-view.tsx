@@ -20,6 +20,11 @@ function displayName(row: LocalSkillInventoryRow): string {
   return row.name ?? row.packageRootPath.split(/[\\/]/).filter(Boolean).at(-1) ?? row.packageRootPath
 }
 
+function matchesSearchTerm(row: LocalSkillInventoryRow, groupName: string, term: string): boolean {
+  const haystack = [groupName, row.name, row.description, row.packageRootPath, ...row.sourceDisplayNames]
+  return haystack.some((value) => value != null && value.toLowerCase().includes(term))
+}
+
 function groupDisplayName(group: LocalSkillGroupRow): string {
   return group.name
 }
@@ -90,6 +95,7 @@ export function LocalSkillsView({
   const [pendingOpenGroup, setPendingOpenGroup] = useState<LocalSkillGroupRow | null>(null)
   const [selectedOpenRowKey, setSelectedOpenRowKey] = useState<string | null>(null)
   const [selectedGroupKey, setSelectedGroupKey] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string>("")
 
   const groupedRows = useMemo(() => {
     if (!snapshot) return []
@@ -107,6 +113,15 @@ export function LocalSkillsView({
       hasVersionConflict: false
     }))
   }, [snapshot])
+
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+
+  const visibleGroups = useMemo(() => {
+    if (!normalizedSearchTerm) return groupedRows
+    return groupedRows.filter((group) =>
+      group.items.some((row) => matchesSearchTerm(row, group.name, normalizedSearchTerm))
+    )
+  }, [groupedRows, normalizedSearchTerm])
 
   const selectedGroup = useMemo(
     () => groupedRows.find((group) => group.groupKey === selectedGroupKey) ?? null,
@@ -205,17 +220,43 @@ export function LocalSkillsView({
           <CardHeader>
             <CardTitle id="local-skills-list-heading">{dictionary.updatesView.inventoryTitle}</CardTitle>
             <CardDescription>
-              {snapshot ? `${groupedRows.length} local skill${groupedRows.length === 1 ? "" : "s"}` : copy.noSnapshot}
+              {!snapshot
+                ? copy.noSnapshot
+                : normalizedSearchTerm
+                  ? copy.filteredCount(visibleGroups.length, groupedRows.length)
+                  : `${groupedRows.length} local skill${groupedRows.length === 1 ? "" : "s"}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {snapshot && groupedRows.length > 0 ? (
+              <div className="local-skills-toolbar">
+                <Input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder={copy.searchPlaceholder}
+                  aria-label={copy.searchLabel}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {searchTerm ? (
+                  <Button size="sm" variant="ghost" onClick={() => setSearchTerm("")}>
+                    {copy.clearSearch}
+                  </Button>
+                ) : null}
+              </div>
+            ) : null}
+
             {isRefreshing && !snapshot ? <div className="callout">{copy.loading}</div> : null}
             {!isRefreshing && !snapshot ? <div className="callout">{copy.noSnapshot}</div> : null}
             {snapshot && groupedRows.length === 0 ? <div className="callout">{copy.empty}</div> : null}
+            {snapshot && groupedRows.length > 0 && visibleGroups.length === 0 ? (
+              <div className="callout">{copy.noMatch(searchTerm.trim())}</div>
+            ) : null}
 
-            {snapshot && groupedRows.length > 0 ? (
+            {snapshot && visibleGroups.length > 0 ? (
               <div className="stack-list">
-                {groupedRows.map((group) => {
+                {visibleGroups.map((group) => {
                   const name = groupDisplayName(group)
                   const isSelected = selectedGroupKey === group.groupKey
                   const isBusy = isGroupBusy(group, uploadingRowKey, deletingRowKey)

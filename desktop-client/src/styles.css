@@ -602,6 +602,22 @@ select:focus-visible {
   grid-column: 1 / -1;
 }
 
+.local-skills-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.local-skills-toolbar .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.local-skills-toolbar .btn {
+  flex-shrink: 0;
+}
+
 .local-skill-item {
   min-width: 0;
 }

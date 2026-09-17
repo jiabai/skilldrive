@@ -38,9 +38,8 @@ The Electron main process reads these environment variables during local develop
 - `SKILLDRIVE_API_TOKEN` - optional first-run API token bootstrap; when the secret store is empty, the runtime stores this value through `keytar` and then reads the token from the secret store
 - `SKILLDRIVE_POLL_INTERVAL_MS` - optional polling interval in milliseconds, defaults to `30000`
 - `SKILLDRIVE_DOWNLOAD_DECRYPTION_SECRET` - optional current-session secret for encrypted skill downloads; set it to the backend `SECRET_KEY` only when `ENABLE_SKILL_DOWNLOAD_ENCRYPTION=true`
-- `SKILLDRIVE_CODEX_SKILLS_PATH` - optional override for the Codex skills directory
-- `SKILLDRIVE_CLAUDE_CODE_SKILLS_PATH` - optional override for the Claude Code skills directory
-- `SKILLDRIVE_GEMINI_CLI_SKILLS_PATH` - optional override for the Gemini CLI skills directory
+
+Per-agent skill directories are not configured through environment variables. They are auto-detected from the supported agent definitions and can be overridden in the app's agent path settings (validated and persisted in the local JSON config).
 
 The desktop runtime can distribute encrypted downloads when `SKILLDRIVE_DOWNLOAD_DECRYPTION_SECRET` is present in the Electron main-process environment and matches the backend `SECRET_KEY` used for download encryption. The secret is not stored in JSON config, renderer state, or logs. If encrypted downloads are enabled but this secret is missing or wrong, distribution fails closed before extraction or agent-directory writes.
 

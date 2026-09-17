@@ -101,8 +101,11 @@ SkillDrive distributes skills to all major AI coding agents:
 | **Antigravity** | `~/.gemini/antigravity/skills` | ✅ |
 | **OpenClaw** | `~/.openclaw/skills` | ✅ |
 | **CodeBuddy** | `~/.codebuddy/skills` | ✅ |
+| **WorkBuddy** | `~/.workbuddy/skills` | ✅ |
+| **Hermes Agent** | `~/.hermes/skills` | ✅ |
+| **QwenWork CN** | `~/.qwenworkcn/skills` | ✅ |
 
-> � The desktop client auto-detects installed agents and manages skill distribution with a review-first workflow.
+> 💡 The desktop client auto-detects installed agents and manages skill distribution with a review-first workflow. Per-agent skill directories can be overridden in the app's agent path settings.
 
 ---
 
@@ -199,9 +202,7 @@ cd desktop-client
 npm install
 set SKILLDRIVE_API_BASE_URL=http://127.0.0.1:8001
 set SKILLDRIVE_API_TOKEN=ask_live_your_token
-set SKILLDRIVE_CODEX_SKILLS_PATH=%USERPROFILE%\.codex\skills
-set SKILLDRIVE_CLAUDE_CODE_SKILLS_PATH=%USERPROFILE%\.claude\skills
-set SKILLDRIVE_GEMINI_CLI_SKILLS_PATH=%USERPROFILE%\.gemini\skills
+set SKILLDRIVE_POLL_INTERVAL_MS=30000
 npm test
 npm run build
 ```
@@ -370,7 +371,7 @@ sequenceDiagram
     Client->>API: POST /tokens (create API token)
     API-->>Client: API token
 
-    Client->>API: GET /api/v1/skills + POST /api/v1/skills/download (API token)
+    Client->>API: GET /api/v1/skills + POST /api/v1/client/skills/download (API token)
     API->>DB: Verify token owner + permissions
     API-->>Client: Skill metadata + versioned ZIP
 ```
@@ -437,7 +438,7 @@ Each user's directory is fully isolated — users can only access their own skil
 | GET | `/api/v1/skills/cache-policy` | Get skill cache policy |
 | POST | `/api/v1/skills` | Create new skill |
 | POST | `/api/v1/skills/upload` | Upload skill ZIP |
-| POST | `/api/v1/skills/download` | Download skill package (encrypted, API token only) |
+| POST | `/api/v1/client/skills/download` | Download skill package (encrypted, API token only) |
 | GET | `/api/v1/skills/{id}` | Get skill details (API token only) |
 | PUT | `/api/v1/skills/{id}` | Update skill |
 | DELETE | `/api/v1/skills/{id}` | Delete skill |

@@ -24,5 +24,6 @@
 - `2026-05-14-linux-cli-packaged-deployment.md` - Linux CLI package-and-install-script deployment spec (Chinese)
 - `2026-08-27-responsive-review-workspace.md` - Unified responsive desktop Shell for Home, Updates, Local Skills, and Projects, including Renderer-orchestrated multi-select distribution
 - `2026-08-28-home-review-card-placement.md` - Home review preview placement below metrics spanning the full row width on wide screens
+- `2026-09-18-agent-skill-viewer.md` - Agent 视角：按 Agent 浏览本机 SKILL 的两级视图需求草稿（中文，待确认）
 
 Canonical rule: work from the local product spec first.

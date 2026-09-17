@@ -34,9 +34,8 @@ Electron 主进程在本地开发时读取以下环境变量：
 - `SKILLDRIVE_API_TOKEN` - 可选的首次运行 API Token 引导；当密钥存储为空时，运行时会通过 `keytar` 存储此值，然后从密钥存储中读取 Token
 - `SKILLDRIVE_POLL_INTERVAL_MS` - 可选的轮询间隔（毫秒），默认为 `30000`
 - `SKILLDRIVE_DOWNLOAD_DECRYPTION_SECRET` - 可选的当前会话下载解密密钥；仅当后端 `ENABLE_SKILL_DOWNLOAD_ENCRYPTION=true` 时，将它设置为后端 `SECRET_KEY`
-- `SKILLDRIVE_CODEX_SKILLS_PATH` - 可选的 Codex 技能目录覆盖
-- `SKILLDRIVE_CLAUDE_CODE_SKILLS_PATH` - 可选的 Claude Code 技能目录覆盖
-- `SKILLDRIVE_GEMINI_CLI_SKILLS_PATH` - 可选的 Gemini CLI 技能目录覆盖
+
+各 Agent 的技能目录不通过环境变量配置。它们会根据内置的 Agent 定义自动检测，也可以在客户端内的路径设置中覆盖（经校验后持久化到本地 JSON 配置）。
 
 **关于技能下载的加密说明**：当 `SKILLDRIVE_DOWNLOAD_DECRYPTION_SECRET` 存在于 Electron 主进程环境变量中，并且与后端用于下载加密的 `SECRET_KEY` 一致时，桌面运行时可以分发加密下载包。该密钥不会写入 JSON 配置、渲染器状态或日志。如果后端开启了加密下载，但该密钥缺失或不匹配，分发会在解压或写入 Agent 目录前安全失败。
 
