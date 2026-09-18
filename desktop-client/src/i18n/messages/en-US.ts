@@ -225,6 +225,43 @@ export const enUSDictionary = {
     deleteConfirmDestructivePlaceholder: "Type skill name here",
     deleteConfirmButton: "Delete"
   },
+  agentSkillsView: {
+    eyebrow: "",
+    title: "Agent view",
+    summary: "Browse local skill directories by agent",
+    loading: "Loading agent information...",
+    noSnapshot: "Agent detection information is not loaded yet.",
+    noAgents: "No installed agents were detected.",
+    refresh: "Refresh",
+    refreshing: "Refreshing...",
+    back: "Back to agent list",
+    inspect: (name: string) => `View ${name}`,
+    agentCount: (count: number) => `${count} agents installed`,
+    skillCount: (count: number) => `${count} skills`,
+    detailLabel: (name: string) => `${name} skills`,
+    targetPath: (value: string) => `Directory ${value}`,
+    sharedWith: (value: string) => `Shares this directory with ${value}`,
+    descriptionLabel: "Description",
+    noDescription: "No description",
+    localVersionLabel: "Local version",
+    noVersion: "Unknown",
+    openFolder: "Open folder",
+    emptySkills: "No skills were found in this directory.",
+    noValidSkills: "No valid skill packages were found in this directory.",
+    validationState: (value: string) => `Validation: ${value}`,
+    directoryStatusLabels: {
+      ok: "Ready",
+      empty: "Directory is empty or has no valid skill",
+      missing: "No skill directory found"
+    },
+    validationStateLabels: {
+      valid: "Valid",
+      "missing-skill-md": "Missing SKILL.md",
+      "invalid-skill-name": "Invalid skill name",
+      unreadable: "Unreadable",
+      "not-directory": "Not a directory"
+    }
+  },
   projectsView: {
     eyebrow: "",
     title: "Projects",

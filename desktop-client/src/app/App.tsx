@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import { AppShell, type AppView } from "@/components/app-shell"
+import { AgentSkillsView } from "@/components/agent-skills-view"
 import { HomeView } from "@/components/home-view"
 import { LocalSkillsView } from "@/components/local-skills-view"
 import { ProjectsView } from "@/components/projects-view"
@@ -262,6 +263,7 @@ export function App() {
     null
   )
   const [activeView, setActiveView] = useState<AppView>("home")
+  const [selectedAgentId, setSelectedAgentId] = useState<AgentId | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [selectedLocale, setSelectedLocale] = useState<AppLocale>(initialLocale)
   const [selectedTheme, setSelectedTheme] = useState<AppTheme>("dark")
@@ -680,7 +682,7 @@ export function App() {
       setSyncState(state)
       setErrorMessage(null)
       await refreshPreDistributionCheckForState(state)
-      if (activeView === "local-skills") {
+      if (activeView === "local-skills" || activeView === "agent-skills") {
         await refreshLocalSkillsState()
       }
       setActivity((current) =>
@@ -1380,9 +1382,21 @@ export function App() {
       void refreshLocalSkillsState()
     }
 
+    if (view === "agent-skills" && configurationReady && localSkillsSnapshot === null) {
+      void refreshLocalSkillsState()
+    }
+
     if (view === "projects" && projectsSnapshot === null) {
       void refreshProjectsState()
     }
+  }
+
+  const handleSelectAgent = (agentId: AgentId) => {
+    setSelectedAgentId(agentId)
+  }
+
+  const handleBackToAgentList = () => {
+    setSelectedAgentId(null)
   }
 
   const handleRefreshLocalSkills = async () => {
@@ -1778,6 +1792,19 @@ export function App() {
             onRefresh={handleRefreshLocalSkills}
             onUpload={handleUploadLocalSkill}
             onDelete={handleDeleteLocalSkill}
+            onOpenFolder={handleOpenLocalSkillFolder}
+          />
+        ) : activeView === "agent-skills" ? (
+          <AgentSkillsView
+            detectionSnapshot={agentDetectionSnapshot}
+            inventorySnapshot={localSkillsSnapshot}
+            selectedAgentId={selectedAgentId}
+            bridgeAvailable={bridgeAvailable}
+            configurationReady={configurationReady}
+            isRefreshing={isLocalSkillsRefreshing}
+            onSelectAgent={handleSelectAgent}
+            onBackToList={handleBackToAgentList}
+            onRefresh={handleRefreshLocalSkills}
             onOpenFolder={handleOpenLocalSkillFolder}
           />
         ) : activeView === "projects" ? (

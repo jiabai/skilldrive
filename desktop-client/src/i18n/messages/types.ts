@@ -37,6 +37,7 @@ export interface AppDictionary {
       localSkills: string
       updates: string
       projects: string
+      agentSkills: string
     }
     bridgeStatus: {
       unavailable: string
@@ -217,6 +218,43 @@ export interface AppDictionary {
     deleteConfirmDestructiveHint: string
     deleteConfirmDestructivePlaceholder: string
     deleteConfirmButton: string
+  }
+  agentSkillsView: {
+    eyebrow: string
+    title: string
+    summary: string
+    loading: string
+    noSnapshot: string
+    noAgents: string
+    refresh: string
+    refreshing: string
+    back: string
+    inspect: (name: string) => string
+    agentCount: (count: number) => string
+    skillCount: (count: number) => string
+    detailLabel: (name: string) => string
+    targetPath: (value: string) => string
+    sharedWith: (value: string) => string
+    descriptionLabel: string
+    noDescription: string
+    localVersionLabel: string
+    noVersion: string
+    openFolder: string
+    emptySkills: string
+    noValidSkills: string
+    validationState: (value: string) => string
+    directoryStatusLabels: {
+      ok: string
+      empty: string
+      missing: string
+    }
+    validationStateLabels: {
+      valid: string
+      "missing-skill-md": string
+      "invalid-skill-name": string
+      unreadable: string
+      "not-directory": string
+    }
   }
   projectsView: {
     eyebrow: string

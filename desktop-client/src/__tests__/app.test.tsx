@@ -488,7 +488,7 @@ describe("App", () => {
     const navigation = screen.getByRole("navigation", { name: "SkillDrive Desktop" })
 
     await waitFor(() => {
-      expect(within(navigation).getAllByRole("button")).toHaveLength(4)
+      expect(within(navigation).getAllByRole("button")).toHaveLength(5)
       expect(screen.getByText("Desktop bridge connected")).toBeInTheDocument()
     })
 
@@ -1178,7 +1178,8 @@ describe("App", () => {
       "Home",
       "Updates",
       "Local Skills",
-      "Projects"
+      "Projects",
+      "Agent view"
     ])
 
     fireEvent.click(within(navigation).getByRole("button", { name: "Local Skills" }))
@@ -1381,7 +1382,8 @@ describe("App", () => {
       "Home",
       "Updates",
       "Local Skills",
-      "Projects"
+      "Projects",
+      "Agent view"
     ])
 
     fireEvent.click(within(navigation).getByRole("button", { name: "Projects" }))

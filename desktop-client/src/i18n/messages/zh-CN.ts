@@ -220,6 +220,43 @@ export const zhCNDictionary = {
     deleteConfirmDestructivePlaceholder: "Skill 名称",
     deleteConfirmButton: "删除"
   },
+  agentSkillsView: {
+    eyebrow: "",
+    title: "Agent 视角",
+    summary: "按 agent 浏览本机 SKILL 目录",
+    loading: "正在加载 agent 信息...",
+    noSnapshot: "尚未加载 agent 检测信息。",
+    noAgents: "未检测到已安装的 agent。",
+    refresh: "刷新",
+    refreshing: "刷新中...",
+    back: "返回 agent 列表",
+    inspect: (name: string) => `查看 ${name}`,
+    agentCount: (count: number) => `已安装 ${count} 个 agent`,
+    skillCount: (count: number) => `${count} 个 SKILL`,
+    detailLabel: (name: string) => `${name} 的 SKILL`,
+    targetPath: (value: string) => `目录 ${value}`,
+    sharedWith: (value: string) => `与 ${value} 共享目录`,
+    descriptionLabel: "描述",
+    noDescription: "暂无描述",
+    localVersionLabel: "本地版本",
+    noVersion: "未知",
+    openFolder: "打开目录",
+    emptySkills: "该目录下没有发现 SKILL。",
+    noValidSkills: "该目录下没有有效的 SKILL 包。",
+    validationState: (value: string) => `校验状态：${value}`,
+    directoryStatusLabels: {
+      ok: "已就绪",
+      empty: "目录为空或无有效 SKILL",
+      missing: "未找到 SKILL 目录"
+    },
+    validationStateLabels: {
+      valid: "有效",
+      "missing-skill-md": "缺少 SKILL.md",
+      "invalid-skill-name": "SKILL 名称无效",
+      unreadable: "无法读取",
+      "not-directory": "不是目录"
+    }
+  },
   projectsView: {
     eyebrow: "",
     title: "项目",

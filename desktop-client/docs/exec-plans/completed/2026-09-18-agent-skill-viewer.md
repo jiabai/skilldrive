@@ -12,9 +12,9 @@
 
 ## Status
 
-- Product spec: 已由 bicho 确认（2026-09-18），见 `docs/product-specs/2026-09-18-agent-skill-viewer.md`。
+- Product spec: 已由 bicho 确认（2026-09-18），见 `../../product-specs/2026-09-18-agent-skill-viewer.md`。
 - Implementation plan: 本文件，2026-09-18 创建。
-- Implementation: 进行中。
+- Implementation: 已完成并归档。renderer 侧与 electron 侧类型检查均无新增错误；`npm test` 241 通过、2 失败，两个失败均为 Windows 下符号链接相关的既有失败，与本次改动无关。
 
 ## Scope decomposition
 
@@ -55,32 +55,32 @@
 
 ### 1. i18n
 
-- [ ] `types.ts` 增加 `appShell.navigation.agentSkills` 与 `agentSkillsView` 类型块。
-- [ ] `zh-CN.ts` 与 `en-US.ts` 补齐中英文案，包含空状态、目录状态、数量统计。
+- [x] `types.ts` 增加 `appShell.navigation.agentSkills` 与 `agentSkillsView` 类型块。
+- [x] `zh-CN.ts` 与 `en-US.ts` 补齐中英文案，包含空状态、目录状态、数量统计。
 
 ### 2. AgentSkillsView 组件
 
-- [ ] 定义 `AgentSkillEntry` 派生类型：agentId、displayName、targetPaths、rows、目录状态。
-- [ ] 从 detection snapshot 取已安装 agent，从 inventory snapshot 按 `sourceAgents` 归集行。
-- [ ] 第一级：卡片列表，展示显示名、有效 SKILL 数量、目录路径、共享提示、目录状态徽章。
-- [ ] 第二级：返回栏、agent 标题、目录路径、SKILL 表格，每行支持打开所在目录。
-- [ ] 空状态与加载态：无快照、无已安装 agent、目录为空、目录内无有效 SKILL。
+- [x] 定义 `AgentSkillEntry` 派生类型：agentId、displayName、targetPaths、rows、目录状态。
+- [x] 从 detection snapshot 取已安装 agent，从 inventory snapshot 按 `sourceAgents` 归集行。
+- [x] 第一级：卡片列表，展示显示名、有效 SKILL 数量、目录路径、共享提示、目录状态徽章。
+- [x] 第二级：返回栏、agent 标题、目录路径、SKILL 表格，每行支持打开所在目录。
+- [x] 空状态与加载态：无快照、无已安装 agent、目录为空、目录内无有效 SKILL。
 
 ### 3. 导航与状态接入
 
-- [ ] `app-shell.tsx` 增加导航项与 Bot 图标。
-- [ ] `App.tsx` 增加 `selectedAgentId`，进入视图时若库存为空则刷新。
-- [ ] 顶部刷新按钮覆盖新视图。
+- [x] `app-shell.tsx` 增加导航项与 Bot 图标。
+- [x] `App.tsx` 增加 `selectedAgentId`，进入视图时若库存为空则刷新。
+- [x] 顶部刷新按钮覆盖新视图。
 
 ### 4. 验证
 
-- [ ] `npm run typecheck:electron` 通过。
-- [ ] `npm test` 通过，无回归。
+- [x] `npm run typecheck:electron` 通过。
+- [x] `npm test` 通过，无回归。
 
 ### 5. 文档与归档
 
-- [ ] `docs/ARCHITECTURE.md` 记录新视图与派生规则。
-- [ ] 归档本计划到 `completed/`，更新两个 index 与 `task-tracker.md`。
+- [x] `docs/ARCHITECTURE.md` 记录新视图与派生规则。
+- [x] 归档本计划到 `completed/`，更新两个 index 与 `task-tracker.md`。
 
 ## Validation
 

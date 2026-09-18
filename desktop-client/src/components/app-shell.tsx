@@ -1,14 +1,14 @@
 import type { ReactNode } from "react"
 import { useCallback, useEffect, useState } from "react"
 
-import { Boxes, ChevronsLeft, ChevronsRight, FolderOpen, House, PanelsTopLeft, RefreshCw, Settings } from "lucide-react"
+import { Bot, Boxes, ChevronsLeft, ChevronsRight, FolderOpen, House, PanelsTopLeft, RefreshCw, Settings } from "lucide-react"
 
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Badge, Button } from "@/components/ui-primitives"
 import { useI18n } from "@/i18n/use-i18n"
 import type { AppTheme } from "@/types"
 
-export type AppView = "home" | "local-skills" | "updates" | "projects"
+export type AppView = "home" | "local-skills" | "updates" | "projects" | "agent-skills"
 
 type AppShellProps = {
   activeView: AppView
@@ -74,7 +74,8 @@ export function AppShell({
       label: dictionary.appShell.navigation.localSkills,
       Icon: FolderOpen
     },
-    { view: "projects" as const, label: dictionary.appShell.navigation.projects, Icon: PanelsTopLeft }
+    { view: "projects" as const, label: dictionary.appShell.navigation.projects, Icon: PanelsTopLeft },
+    { view: "agent-skills" as const, label: dictionary.appShell.navigation.agentSkills, Icon: Bot }
   ]
 
   const shellClasses = collapsed ? "app-shell app-shell--collapsed" : "app-shell"

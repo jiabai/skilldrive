@@ -28,7 +28,7 @@ state.
 - `src/app/`
   - `App.tsx`: root renderer composition and review-first state handling
 - `src/components/`
-  - desktop shell, Home, Updates, Local Skills, and Projects views, Settings drawer, theme toggle, local UI primitives, and supporting review panels
+  - desktop shell, Home, Updates, Local Skills, Projects, and Agent Skills views, Settings drawer, theme toggle, local UI primitives, and supporting review panels
 - `src/i18n/`
   - local locale dictionaries, provider, hook, formatting helpers, and language codes used by the renderer
 - `src/cli/`
@@ -91,6 +91,8 @@ safety + backend Client API + cache-owned temporary ZIP staging
 project skills core -> persisted project records + catalog project targets +
 shared package tree safety + filesystem scan/import services
 
+agent skills renderer -> agent detection snapshot + local skill inventory snapshot, grouped in the renderer by `sourceAgents`
+
 review workspace renderer -> pure batch review controller + existing App state
 review workspace renderer -> existing single-skill distribution callback -> IPC
 
@@ -116,6 +118,10 @@ agent adapters -> local agent installations and skill directories
   `slug` when present, otherwise `name`. Uploads require an explicit row action,
   revalidate the selected row in the main process, and only create server-missing
   skills through the Client API.
+- Agent Skills view is a renderer-only projection. It lists installed agents from
+  the detection snapshot, groups local skill inventory rows by `sourceAgents`,
+  counts only rows whose `validationState` is `valid`, and keeps the selected
+  agent in renderer state without filesystem access or persistence.
 - Projects inventory is on-demand and project-scoped. Project records persist in
   `config/projects.json`; project skill scans are transient; project skill
   import requires explicit source folder, writable project target, and overwrite
@@ -240,6 +246,7 @@ Dependencies should only point downward across those boundaries.
 - `electron/ipc.ts`
 - `src/app/App.tsx`
 - `src/components/theme-toggle.tsx`
+- `src/components/agent-skills-view.tsx`
 - `src/styles.css`
 - `src/core/sync/sync-service.ts`
 - `src/core/detection/agent-detection-service.ts`

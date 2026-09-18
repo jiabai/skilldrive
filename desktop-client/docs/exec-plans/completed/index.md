@@ -4,6 +4,7 @@
 
 | File | Outcome |
 |------|---------|
+| [2026-09-18-agent-skill-viewer.md](2026-09-18-agent-skill-viewer.md) | Sidebar gained an "Agent view" entry with a two-level read-only workspace: installed agents first, then the skills under that agent's owned target directory; renderer-only projection over the detection snapshot and local skill inventory, with no new IPC, backend, or persistence surface |
 | [2026-09-02-github-actions-release-packaging.md](2026-09-02-github-actions-release-packaging.md) | GitHub Actions workflow now builds Windows NSIS installer, per-architecture macOS dmg files, and the Linux CLI tarball, and creates a draft GitHub Release with all artifacts on `v*` tag push; validated end-to-end with the v0.1.5 release |
 | [2026-09-02-github-actions-release-packaging-tasks.md](2026-09-02-github-actions-release-packaging-tasks.md) | Completed task checklist for the GitHub Actions release packaging workflow |
 | [2026-08-28-home-review-card-full-width.md](2026-08-28-home-review-card-full-width.md) | Wide-screen Home review preview now spans the full row below the metrics region, aligned with the metrics' left and right edges; medium and narrow layouts remain stacked |
