@@ -756,6 +756,23 @@ select:focus-visible {
   gap: 0.45rem;
 }
 
+.update-item__expanded-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--osh-border);
+}
+
+.update-item__expanded-note {
+  margin-right: auto;
+  color: var(--osh-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
 .update-item__meta {
   display: flex;
   flex-wrap: wrap;
@@ -1559,6 +1576,7 @@ select:focus-visible {
 
   .page-intro__actions,
   .update-item__actions,
+  .update-item__expanded-actions,
   .local-skill-item__actions,
   .local-skills-detail__actions {
     justify-content: flex-start;

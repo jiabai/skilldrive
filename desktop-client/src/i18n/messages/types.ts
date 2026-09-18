@@ -255,6 +255,15 @@ export interface AppDictionary {
       unreadable: string
       "not-directory": string
     }
+    showMore: string
+    showLess: string
+    delete: string
+    deleting: string
+    deleteConfirmTitle: string
+    deleteConfirmDescription: (name: string) => string
+    deleteConfirmWarning: string
+    deleteConfirmSharedNotice: (value: string) => string
+    deleteConfirmButton: string
   }
   projectsView: {
     eyebrow: string
@@ -299,7 +308,6 @@ export interface AppDictionary {
     targetCount: (count: number) => string
     sourceLabels: {
       project: string
-      global: string
     }
     validationStateLabels: {
       valid: string

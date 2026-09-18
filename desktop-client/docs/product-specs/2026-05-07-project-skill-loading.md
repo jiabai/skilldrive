@@ -1,6 +1,12 @@
 # Project Skill Loading
 
-Status: implemented on 2026-05-07
+Status: implemented on 2026-05-07; project detail scope revised on 2026-09-18
+
+Scope revision: `2026-09-18-project-skill-project-only.md` removed the
+`~/.agents/skills` global row merge from the project detail view. Project detail
+now lists project-scoped rows only. Everything else in this spec still describes
+shipped behavior, including project storage, project target resolution, and
+project skill import.
 
 ## Purpose
 
@@ -20,9 +26,8 @@ renderer-only UI state, and privileged filesystem work behind typed IPC.
   `config/config.json`, `agent-paths.json`, and sync state.
 - Scan project folders for project-level agent skills using catalog-owned
   project path metadata.
-- Show project skills and global local skills from `~/.agents/skills` in one
-  detail view, with clear source badges and project skills taking precedence on
-  name conflicts.
+- Show project skills in the detail view with a clear source badge. The global
+  merge from `~/.agents/skills` was removed on 2026-09-18.
 - Let operators import a validated local skill folder into one explicitly chosen
   project agent skills target.
 - Keep directory selection, filesystem reads, validation, copying, overwrite,
@@ -122,13 +127,13 @@ The skills list shows:
 - resolved skill identity
 - local version, when available
 - description, when available
-- source badge: `project` or `global`
+- source badge, which is always `project` after the 2026-09-18 scope revision
 - agent display names that contributed the row
-- absolute or project-relative path, shown in monospace
-- validation or conflict notes
+- project-relative path, shown in monospace
+- validation notes
 
-Project skills are listed before global skills. If a project skill and global
-skill have the same resolved identity, only the project skill is shown.
+Every row comes from a project target under the selected project root. No row
+originates from a home-directory skill target.
 
 ### Import Skill
 
@@ -297,9 +302,10 @@ IPC rules:
 - Adding a valid absolute project directory persists it in `projects.json`.
 - Duplicate names and duplicate normalized paths are rejected.
 - Removing a project removes only the persisted record.
-- Opening a project scans project-level skills and shows project/global source
-  badges.
-- Project skills take precedence over same-name global skills.
+- Opening a project scans project-level skills and shows a project source
+  badge.
+- Project detail lists no rows from home-directory skill targets. The global row
+  merge was removed on 2026-09-18.
 - Import validates a source skill folder before enabling import.
 - Import rejects missing `SKILL.md`, unsafe identity, symlink/path escape,
   excessive file count, and excessive total bytes.

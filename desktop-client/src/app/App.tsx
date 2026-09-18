@@ -1806,6 +1806,8 @@ export function App() {
             onBackToList={handleBackToAgentList}
             onRefresh={handleRefreshLocalSkills}
             onOpenFolder={handleOpenLocalSkillFolder}
+            deletingRowKey={busyLocalSkillDeleteRowKey}
+            onDelete={handleDeleteLocalSkill}
           />
         ) : activeView === "projects" ? (
           <ProjectsView

@@ -665,15 +665,8 @@ async function createApplicationServices(): Promise<void> {
     payload: ProjectScanPayload
   ): Promise<ProjectSkillScanSnapshot> => {
     const project = await projectConfigStore.getProject(payload.projectId)
-    const globalSnapshot = await refreshLocalSkillsSnapshot().catch((error: unknown) => {
-      console.warn("Failed to load global local skills while scanning project", error)
-      return null
-    })
 
-    return projectSkillScanService.scan({
-      project,
-      globalSnapshot
-    })
+    return projectSkillScanService.scan({ project })
   }
 
   const openProjectFolder = async (payload: ProjectOpenFolderPayload): Promise<void> => {

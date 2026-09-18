@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   Badge,
   Button,
@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Dialog,
   PageIntro
 } from "@/components/ui-primitives"
 import { useI18n } from "@/i18n/use-i18n"
@@ -36,10 +37,12 @@ type AgentSkillsViewProps = {
   bridgeAvailable: boolean
   configurationReady: boolean
   isRefreshing: boolean
+  deletingRowKey: string | null
   onSelectAgent: (agentId: AgentId) => void
   onBackToList: () => void
   onRefresh: () => void
   onOpenFolder: (row: LocalSkillInventoryRow) => void
+  onDelete: (row: LocalSkillInventoryRow) => void
 }
 
 function buildEntries(
@@ -81,6 +84,14 @@ function directoryName(row: LocalSkillInventoryRow): string {
   return row.packageRootPath.split(/[\\/]/).filter(Boolean).at(-1) ?? row.packageRootPath
 }
 
+function rowDisplayName(row: LocalSkillInventoryRow): string {
+  return row.name ?? directoryName(row)
+}
+
+function otherSharedAgentNames(row: LocalSkillInventoryRow, selfDisplayName: string): string[] {
+  return row.sourceDisplayNames.filter((name) => name !== selfDisplayName)
+}
+
 function directoryStatusTone(status: DirectoryStatus) {
   if (status === "ok") return "success" as const
   if (status === "empty") return "warning" as const
@@ -94,13 +105,18 @@ export function AgentSkillsView({
   bridgeAvailable,
   configurationReady,
   isRefreshing,
+  deletingRowKey,
   onSelectAgent,
   onBackToList,
   onRefresh,
-  onOpenFolder
+  onOpenFolder,
+  onDelete
 }: AgentSkillsViewProps) {
   const { dictionary } = useI18n()
   const copy = dictionary.agentSkillsView
+
+  const [expandedRowKey, setExpandedRowKey] = useState<string | null>(null)
+  const [pendingDeleteRow, setPendingDeleteRow] = useState<LocalSkillInventoryRow | null>(null)
 
   const entries = useMemo(
     () => buildEntries(detectionSnapshot, inventorySnapshot),
@@ -111,6 +127,39 @@ export function AgentSkillsView({
     ? entries.find((entry) => entry.agentId === selectedAgentId) ?? null
     : null
 
+  const deleteInFlight = deletingRowKey !== null
+  const rowActionsDisabled = !bridgeAvailable || deleteInFlight
+
+  useEffect(() => {
+    if (!expandedRowKey) {
+      return
+    }
+
+    const stillExists = selectedEntry?.rows.some((row) => row.rowKey === expandedRowKey) ?? false
+
+    if (!stillExists) {
+      setExpandedRowKey(null)
+    }
+  }, [expandedRowKey, selectedEntry])
+
+  const handleToggleExpanded = (rowKey: string) => {
+    setExpandedRowKey((current) => (current === rowKey ? null : rowKey))
+  }
+
+  const handleRequestDelete = (row: LocalSkillInventoryRow) => {
+    setPendingDeleteRow(row)
+  }
+
+  const handleConfirmDelete = () => {
+    if (!pendingDeleteRow) return
+    onDelete(pendingDeleteRow)
+    setPendingDeleteRow(null)
+  }
+
+  const handleCancelDelete = () => {
+    setPendingDeleteRow(null)
+  }
+
   const refreshButton = (
     <Button variant="secondary" disabled={isRefreshing} onClick={onRefresh}>
       {isRefreshing ? copy.refreshing : copy.refresh}
@@ -118,6 +167,10 @@ export function AgentSkillsView({
   )
 
   if (selectedEntry) {
+    const pendingDeleteSharedNames = pendingDeleteRow
+      ? otherSharedAgentNames(pendingDeleteRow, selectedEntry.displayName)
+      : []
+
     return (
       <section className="page-stack" aria-label={copy.detailLabel(selectedEntry.displayName)}>
         <PageIntro
@@ -163,34 +216,104 @@ export function AgentSkillsView({
 
             {selectedEntry.rows.length > 0 ? (
               <div className="stack-list">
-                {selectedEntry.rows.map((row) => (
-                  <article className="update-item" key={row.rowKey}>
-                    <div className="update-item__header">
-                      <div>
-                        <h3>{row.name ?? directoryName(row)}</h3>
+                {selectedEntry.rows.map((row) => {
+                  const isExpanded = expandedRowKey === row.rowKey
+                  const isRowDeleting = deletingRowKey === row.rowKey
+                  const sharedAgentNames = otherSharedAgentNames(row, selectedEntry.displayName)
+
+                  return (
+                    <article className="update-item" key={row.rowKey}>
+                      <div className="update-item__header">
+                        <div>
+                          <h3>{rowDisplayName(row)}</h3>
+                        </div>
+                        <div className="update-item__actions">
+                          <Badge tone={row.validationState === "valid" ? "success" : "warning"}>
+                            {copy.validationStateLabels[row.validationState]}
+                          </Badge>
+                          <Button size="sm" variant="secondary" onClick={() => onOpenFolder(row)}>
+                            {copy.openFolder}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            aria-expanded={isExpanded}
+                            disabled={rowActionsDisabled}
+                            onClick={() => handleToggleExpanded(row.rowKey)}
+                          >
+                            {isExpanded ? copy.showLess : copy.showMore}
+                          </Button>
+                        </div>
                       </div>
-                      <div className="update-item__actions">
-                        <Badge tone={row.validationState === "valid" ? "success" : "warning"}>
-                          {copy.validationStateLabels[row.validationState]}
+
+                      {isExpanded ? (
+                        <div className="update-item__expanded-actions">
+                          {sharedAgentNames.length > 0 ? (
+                            <span className="update-item__expanded-note">
+                              {copy.sharedWith(sharedAgentNames.join(", "))}
+                            </span>
+                          ) : null}
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            disabled={deleteInFlight}
+                            onClick={() => handleRequestDelete(row)}
+                          >
+                            {isRowDeleting ? copy.deleting : copy.delete}
+                          </Button>
+                        </div>
+                      ) : null}
+
+                      <p className="card__description muted">{row.description ?? copy.noDescription}</p>
+                      <p className="card__description mono">{row.packageRootPath}</p>
+                      <div className="update-item__meta">
+                        <Badge tone="neutral">
+                          {copy.localVersionLabel}: {row.localVersion ?? copy.noVersion}
                         </Badge>
-                        <Button size="sm" variant="secondary" onClick={() => onOpenFolder(row)}>
-                          {copy.openFolder}
-                        </Button>
                       </div>
-                    </div>
-                    <p className="card__description muted">{row.description ?? copy.noDescription}</p>
-                    <p className="card__description mono">{row.packageRootPath}</p>
-                    <div className="update-item__meta">
-                      <Badge tone="neutral">
-                        {copy.localVersionLabel}: {row.localVersion ?? copy.noVersion}
-                      </Badge>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  )
+                })}
               </div>
             ) : null}
           </CardContent>
         </Card>
+
+        {pendingDeleteRow ? (
+          <Dialog
+            open={true}
+            size="narrow"
+            onClose={handleCancelDelete}
+            title={copy.deleteConfirmTitle}
+            description={copy.deleteConfirmDescription(rowDisplayName(pendingDeleteRow))}
+            closeLabel={dictionary.common.close}
+            footer={
+              <div className="dialog-actions">
+                <Button variant="outline" onClick={handleCancelDelete}>
+                  {dictionary.common.cancel}
+                </Button>
+                <Button variant="destructive" onClick={handleConfirmDelete}>
+                  {copy.deleteConfirmButton}
+                </Button>
+              </div>
+            }
+          >
+            <div className="callout callout--warning" role="alert">
+              <span>{copy.deleteConfirmWarning}</span>
+              <ul className="dialog-path-list">
+                <li>
+                  <code>{pendingDeleteRow.packageRootPath}</code>
+                </li>
+              </ul>
+            </div>
+
+            {pendingDeleteSharedNames.length > 0 ? (
+              <div className="callout">
+                {copy.deleteConfirmSharedNotice(pendingDeleteSharedNames.join(", "))}
+              </div>
+            ) : null}
+          </Dialog>
+        ) : null}
       </section>
     )
   }

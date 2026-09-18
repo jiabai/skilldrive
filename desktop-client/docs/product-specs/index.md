@@ -24,6 +24,8 @@
 - `2026-05-14-linux-cli-packaged-deployment.md` - Linux CLI package-and-install-script deployment spec (Chinese)
 - `2026-08-27-responsive-review-workspace.md` - Unified responsive desktop Shell for Home, Updates, Local Skills, and Projects, including Renderer-orchestrated multi-select distribution
 - `2026-08-28-home-review-card-placement.md` - Home review preview placement below metrics spanning the full row width on wide screens
-- `2026-09-18-agent-skill-viewer.md` - Agent 视角：按 Agent 浏览本机 SKILL 的两级视图需求草稿（中文，待确认）
+- `2026-09-18-agent-skill-viewer.md` - Agent 视角：按 Agent 浏览本机 SKILL 的两级视图产品规格（中文，已确认）
+- `2026-09-18-agent-skill-delete.md` - Agent 视角：单行删除 SKILL 的删除范围、共享目录告知与确认流程规格（中文，已确认）
+- `2026-09-18-project-skill-project-only.md` - 项目详情只显示项目内 SKILL：移除 `~/.agents/skills` 全局行合并的规格（英文，已确认）
 
 Canonical rule: work from the local product spec first.

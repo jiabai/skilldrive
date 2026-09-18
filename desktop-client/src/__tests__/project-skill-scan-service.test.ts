@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest"
 
 import type { AgentPathDefinition } from "@/adapters/agents/definitions"
 import { createProjectSkillScanService } from "@/core/projects/project-skill-scan-service"
-import type { LocalSkillsInventorySnapshot, ProjectEntry } from "@/types"
+import type { ProjectEntry } from "@/types"
 
 const definitions: AgentPathDefinition[] = [
   {
@@ -39,59 +39,6 @@ function writeSkill(root: string, markdown: string): void {
   writeFileSync(join(root, "SKILL.md"), markdown, "utf8")
 }
 
-function createGlobalSnapshot(homeDir: string): LocalSkillsInventorySnapshot {
-  return {
-    checkedAt: "2026-05-07T00:00:00.000Z",
-    rows: [
-      {
-        rowKey: "global-overridden",
-        name: "project-skill",
-        localVersion: "0.9.0",
-        packageRootPath: join(homeDir, ".agents", "skills", "project-skill"),
-        sourceAgents: ["codex"],
-        sourceDisplayNames: ["Codex"],
-        validationState: "valid",
-        validationMessage: null,
-        serverState: "existing",
-        remoteSkillId: "remote-project-skill",
-        remoteVersion: "0.9.0",
-        uploadable: false
-      },
-      {
-        rowKey: "global-only",
-        name: "global-only",
-        localVersion: "1.0.0",
-        packageRootPath: join(homeDir, ".agents", "skills", "global-only"),
-        sourceAgents: ["codex"],
-        sourceDisplayNames: ["Codex"],
-        validationState: "valid",
-        validationMessage: null,
-        serverState: "missing",
-        remoteSkillId: null,
-        remoteVersion: null,
-        uploadable: true
-      },
-      {
-        rowKey: "non-agents-global",
-        name: "non-agents-global",
-        localVersion: "1.0.0",
-        packageRootPath: join(homeDir, ".claude", "skills", "non-agents-global"),
-        sourceAgents: ["claude-code"],
-        sourceDisplayNames: ["Claude Code"],
-        validationState: "valid",
-        validationMessage: null,
-        serverState: "missing",
-        remoteSkillId: null,
-        remoteVersion: null,
-        uploadable: true
-      }
-    ],
-    groupedRows: [],
-    serverLookupStatus: "ok",
-    serverLookupMessage: null
-  }
-}
-
 describe("project skill scan service", () => {
   const tempRoots: string[] = []
 
@@ -118,9 +65,8 @@ describe("project skill scan service", () => {
     }
   }
 
-  it("scans project skill rows and suppresses same-identity global rows", async () => {
+  it("scans project skill rows without merging global rows", async () => {
     const project = createProject()
-    const homeDir = normalize("C:/Users/Ada")
     writeSkill(
       join(project.path, ".claude", "skills", "project-skill"),
       "---\nname: Project Skill\nslug: project-skill\nversion: 2.0.0\ndescription: Project scoped skill\n---\n"
@@ -131,24 +77,18 @@ describe("project skill scan service", () => {
     )
     const service = createProjectSkillScanService({
       definitions,
-      homeDir: () => homeDir,
       now: () => new Date("2026-05-07T01:00:00.000Z"),
       platform: "win32"
     })
 
-    const snapshot = await service.scan({
-      project,
-      globalSnapshot: createGlobalSnapshot(homeDir)
-    })
+    const snapshot = await service.scan({ project })
 
     expect(snapshot.checkedAt).toBe("2026-05-07T01:00:00.000Z")
     expect(snapshot.targets).toHaveLength(2)
     expect(snapshot.rows.map((row) => `${row.source}:${row.identity ?? "null"}`)).toEqual([
       "project:project-skill",
-      "project:null",
-      "global:global-only"
+      "project:null"
     ])
-    expect(snapshot.rows.some((row) => row.identity === "non-agents-global")).toBe(false)
     expect(snapshot.rows[0]).toEqual(
       expect.objectContaining({
         identity: "project-skill",
@@ -164,14 +104,8 @@ describe("project skill scan service", () => {
       expect.objectContaining({
         identity: null,
         source: "project",
+        relativePath: normalize(".agents/skills/invalid name"),
         validationState: "invalid-skill-name"
-      })
-    )
-    expect(snapshot.rows[2]).toEqual(
-      expect.objectContaining({
-        identity: "global-only",
-        source: "global",
-        sourceDisplayNames: ["Codex"]
       })
     )
   })
@@ -186,7 +120,7 @@ describe("project skill scan service", () => {
       now: () => new Date("2026-05-07T01:00:00.000Z")
     })
 
-    const snapshot = await service.scan({ project, globalSnapshot: null })
+    const snapshot = await service.scan({ project })
 
     expect(snapshot.rows).toEqual([])
     expect(snapshot.errors.length).toBeGreaterThan(0)
@@ -221,7 +155,7 @@ describe("project skill scan service", () => {
       now: () => new Date("2026-05-07T01:00:00.000Z")
     })
 
-    const snapshot = await service.scan({ project, globalSnapshot: null })
+    const snapshot = await service.scan({ project })
 
     expect(snapshot.rows).toHaveLength(1)
     expect(snapshot.rows[0]).toMatchObject({

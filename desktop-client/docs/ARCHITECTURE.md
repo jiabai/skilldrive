@@ -54,7 +54,7 @@ state.
   - read-only local skill inventory, server presence comparison, safe upload ZIP packaging, and Client API upload helper
 - `src/core/projects/`
   - project-relative agent target resolution, project skill metadata parsing,
-    on-demand project/global skill scan, and explicit project skill import
+    on-demand project-scoped skill scan, and explicit project skill import
 - `src/core/detection/`
   - catalog-driven assistant detection, JSON target overrides, OpenClaw priority target selection, and shared physical target dedupe
 - `src/core/storage/`
@@ -122,10 +122,20 @@ agent adapters -> local agent installations and skill directories
   the detection snapshot, groups local skill inventory rows by `sourceAgents`,
   counts only rows whose `validationState` is `valid`, and keeps the selected
   agent in renderer state without filesystem access or persistence.
+- Agent Skills deletion reuses the Local Skills delete IPC channel from a
+  collapsed per-row menu. The menu expands inline under the row header; it is not
+  a floating layer, and only one row is expanded at a time. Unlike the Local
+  Skills view, the Agent Skills entry point sends only the clicked `rowKey` and
+  never `groupRowKeys`, so deletion is scoped to the single physical path and
+  same-name copies under other agents survive.
 - Projects inventory is on-demand and project-scoped. Project records persist in
   `config/projects.json`; project skill scans are transient; project skill
   import requires explicit source folder, writable project target, and overwrite
   flag when replacing an existing skill.
+- Project detail lists project-scoped rows only. The scan walks the catalog
+  project targets under the selected project root and does not receive or merge
+  the global local skills inventory. Global skills remain available in the Local
+  Skills view.
 - Project skill targets are catalog metadata on `supportedAgentDefinitions`.
   Global home-directory targets are not reused for project scanning or import.
   Compatible project read paths can contribute rows but are not writable import

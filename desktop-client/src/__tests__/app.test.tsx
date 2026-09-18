@@ -240,19 +240,6 @@ const defaultProjectScanSnapshot = {
       relativePath: ".claude\\skills\\project-skill",
       validationState: "valid" as const,
       validationMessage: null
-    },
-    {
-      rowKey: "global-row",
-      identity: "global-only",
-      version: "0.1.0",
-      description: null,
-      source: "global" as const,
-      agentIds: ["codex" as const],
-      sourceDisplayNames: ["Codex"],
-      skillPath: "C:\\Users\\test\\.agents\\skills\\global-only",
-      relativePath: null,
-      validationState: "valid" as const,
-      validationMessage: null
     }
   ],
   errors: []
@@ -1428,9 +1415,8 @@ describe("App", () => {
       expect(screen.getByRole("region", { name: "Example Project skills" })).toBeInTheDocument()
       expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument()
       expect(screen.getByText("project-skill")).toBeInTheDocument()
-      expect(screen.getByText("global-only")).toBeInTheDocument()
       expect(screen.getByText("Project")).toBeInTheDocument()
-      expect(screen.getByText("Global")).toBeInTheDocument()
+      expect(screen.queryByText("Global")).not.toBeInTheDocument()
     })
 
     fireEvent.click(screen.getByRole("button", { name: "Add Skill" }))

@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto"
 import { readFile, readdir, stat } from "node:fs/promises"
-import { homedir } from "node:os"
 import { basename, join, posix, win32 } from "node:path"
 
 import { type AgentPathDefinition } from "@/adapters/agents/definitions"
@@ -13,15 +12,14 @@ import {
 } from "@/core/projects/project-skill-metadata"
 import type {
   LocalSkillValidationState,
-  LocalSkillsInventorySnapshot,
   ProjectEntry,
   ProjectSkillRow,
-  ProjectSkillScanSnapshot
+  ProjectSkillScanSnapshot,
+  ProjectSkillSource
 } from "@/types"
 
 export interface ProjectSkillScanServiceOptions {
   definitions?: AgentPathDefinition[]
-  homeDir?: () => string
   now?: () => Date
   platform?: NodeJS.Platform
   readDirectory?: (path: string, options: { withFileTypes: true }) => Promise<DirectoryEntry[]>
@@ -31,7 +29,6 @@ export interface ProjectSkillScanServiceOptions {
 
 export interface ProjectSkillScanInput {
   project: ProjectEntry
-  globalSnapshot: LocalSkillsInventorySnapshot | null
 }
 
 export interface ProjectSkillScanService {
@@ -54,7 +51,7 @@ function createDedupeKey(pathValue: string, platform: NodeJS.Platform): string {
 }
 
 function createRowKey(args: {
-  source: "project" | "global"
+  source: ProjectSkillSource
   path: string
   identity: string | null
   platform: NodeJS.Platform
@@ -68,18 +65,6 @@ function createRowKey(args: {
 function createRelativePath(projectPath: string, skillPath: string, platform: NodeJS.Platform): string {
   const pathModule = getPathModule(platform)
   return pathModule.normalize(pathModule.relative(pathModule.normalize(projectPath), skillPath))
-}
-
-function isPathInside(basePath: string, childPath: string, platform: NodeJS.Platform): boolean {
-  const pathModule = getPathModule(platform)
-  const relativePath = pathModule.relative(pathModule.normalize(basePath), pathModule.normalize(childPath))
-
-  return (
-    relativePath !== "" &&
-    relativePath !== ".." &&
-    !relativePath.startsWith(`..${pathModule.sep}`) &&
-    !pathModule.isAbsolute(relativePath)
-  )
 }
 
 function sortProjectRows(rows: ProjectSkillRow[]): ProjectSkillRow[] {
@@ -104,10 +89,8 @@ export function createProjectSkillScanService(
   options: ProjectSkillScanServiceOptions = {}
 ): ProjectSkillScanService {
   const definitions = options.definitions
-  const homeDir = options.homeDir ?? (() => process.env.HOME ?? process.env.USERPROFILE ?? homedir())
   const now = options.now ?? (() => new Date())
   const platform = options.platform ?? process.platform
-  const pathModule = getPathModule(platform)
   const readDirectory =
     options.readDirectory ??
     ((pathValue: string, readdirOptions: { withFileTypes: true }) =>
@@ -170,38 +153,6 @@ export function createProjectSkillScanService(
     }
   }
 
-  function createGlobalRows(
-    globalSnapshot: LocalSkillsInventorySnapshot | null,
-    projectIdentities: Set<string>
-  ): ProjectSkillRow[] {
-    if (!globalSnapshot) {
-      return []
-    }
-
-    const globalAgentsSkillsPath = pathModule.normalize(pathModule.join(homeDir(), ".agents", "skills"))
-
-    return globalSnapshot.rows
-      .filter(
-        (row) =>
-          row.name !== null &&
-          !projectIdentities.has(row.name) &&
-          isPathInside(globalAgentsSkillsPath, row.packageRootPath, platform)
-      )
-      .map((row) => ({
-        rowKey: `global-${row.rowKey}`,
-        identity: row.name,
-        version: row.localVersion,
-        description: null,
-        source: "global" as const,
-        agentIds: row.sourceAgents,
-        sourceDisplayNames: row.sourceDisplayNames,
-        skillPath: row.packageRootPath,
-        relativePath: null,
-        validationState: row.validationState,
-        validationMessage: row.validationMessage
-      }))
-  }
-
   return {
     async scan(input: ProjectSkillScanInput): Promise<ProjectSkillScanSnapshot> {
       const errors: string[] = []
@@ -230,7 +181,7 @@ export function createProjectSkillScanService(
           checkedAt: now().toISOString(),
           project: input.project,
           targets,
-          rows: createGlobalRows(input.globalSnapshot, new Set()),
+          rows: [],
           errors
         }
       }
@@ -299,10 +250,7 @@ export function createProjectSkillScanService(
         checkedAt: now().toISOString(),
         project: input.project,
         targets,
-        rows: [
-          ...sortProjectRows(projectRows),
-          ...createGlobalRows(input.globalSnapshot, seenProjectIdentities)
-        ],
+        rows: sortProjectRows(projectRows),
         errors
       }
     }

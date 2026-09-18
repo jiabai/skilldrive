@@ -255,7 +255,16 @@ export const zhCNDictionary = {
       "invalid-skill-name": "SKILL 名称无效",
       unreadable: "无法读取",
       "not-directory": "不是目录"
-    }
+    },
+    showMore: "更多",
+    showLess: "收起",
+    delete: "删除",
+    deleting: "删除中...",
+    deleteConfirmTitle: "删除 SKILL",
+    deleteConfirmDescription: (name: string) => `将从磁盘永久删除“${name}”。`,
+    deleteConfirmWarning: "此操作无法撤销。以下路径将从磁盘永久删除：",
+    deleteConfirmSharedNotice: (value: string) => `该目录与 ${value} 共享，删除后这些 agent 也会失去该 SKILL。`,
+    deleteConfirmButton: "删除"
   },
   projectsView: {
     eyebrow: "",
@@ -299,8 +308,7 @@ export const zhCNDictionary = {
     skillCount: (count: number) => `${count} 个 SKILL`,
     targetCount: (count: number) => `${count} 个项目目标`,
     sourceLabels: {
-      project: "项目",
-      global: "全局"
+      project: "项目"
     },
     validationStateLabels: {
       valid: "有效",

@@ -1,8 +1,13 @@
 # Project Skill Loading - Technical Design
 
 Status: implemented
-Last updated: 2026-05-07
+Last updated: 2026-09-18
 Scope: `desktop-client/`
+
+Scope note: the project detail scan was narrowed to project-scoped rows only on
+2026-09-18. The `~/.agents/skills` global row merge described in earlier revisions
+of section 9 is removed. See
+`../product-specs/2026-09-18-project-skill-project-only.md`.
 
 ## 1. Problem Statement
 
@@ -83,11 +88,11 @@ export interface ProjectSkillRow {
   identity: string
   version: string | null
   description: string | null
-  source: "project" | "global"
+  source: "project"
   agentIds: AgentId[]
   sourceDisplayNames: string[]
   skillPath: string
-  relativePath: string | null
+  relativePath: string
   validationState: LocalSkillValidationState
   validationMessage: string | null
 }
@@ -204,8 +209,6 @@ Inputs:
 - selected project ID
 - current project records
 - agent project target definitions
-- global local skills snapshot, when available; project detail uses only rows
-  whose package root lives under `~/.agents/skills`
 - filesystem dependencies for tests
 
 Scan behavior:
@@ -218,10 +221,9 @@ Scan behavior:
 6. Resolve safe identity with the Local Skills rule.
 7. Build project rows keyed by normalized physical path plus identity.
 8. Deduplicate same-identity project rows by first discovered project target.
-9. Merge `~/.agents/skills` global local skill rows after project rows.
-10. Suppress global rows with identities already present in project rows.
 
-The scan is read-only and transient. It should not persist scan results.
+The scan is read-only and transient. It should not persist scan results. It does
+not read, receive, or merge the global local skills inventory.
 
 ## 10. Skill Folder Validation
 
@@ -350,7 +352,8 @@ Unit tests:
 - project config read/write/defaults/invalid JSON
 - duplicate project name and path rejection
 - project target path resolution and dedupe
-- project skill scan with valid, invalid, duplicate, and global-overridden rows
+- project skill scan with valid, invalid, and duplicate rows, with no global row
+  merge
 - source skill folder validation
 - import conflict handling and overwrite behavior
 - import path escape and symlink rejection
@@ -360,7 +363,7 @@ Renderer tests:
 - Projects navigation appears after Updates
 - empty state renders
 - adding/renaming/removing calls bridge methods and refreshes state
-- detail view scans and displays project/global badges
+- detail view scans and displays the project source badge
 - import dialog validates source and disables import on invalid folder
 - overwrite conflict requires explicit confirmation
 
@@ -402,6 +405,13 @@ targets.
 Project import returns a redacted import result. The renderer refreshes the
 project scan after import instead of trusting renderer-provided destination
 paths or file contents.
+
+2026-09-18 scope revision. The project detail scan no longer receives or merges a
+global local skills snapshot. `ProjectSkillScanInput` carries only the project,
+`ProjectSkillSource` is narrowed to `"project"`, `ProjectSkillRow.relativePath` is
+no longer nullable, and the Electron main process no longer refreshes the local
+skills inventory when scanning a project. The catalog project target list,
+including the shared `.agents/skills` target, is unchanged.
 
 ## 18. Documentation Updates After Implementation
 

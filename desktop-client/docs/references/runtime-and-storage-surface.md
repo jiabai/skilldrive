@@ -140,10 +140,9 @@ directory pickers, reveal project folders, scan project-level skills, validate
 source skill folders, and import source folders into catalog-defined project
 targets. Filesystem reads and writes stay in the Electron main process. Import
 resolves destination paths from persisted project state and catalog metadata,
-never from renderer-provided destination paths. Project detail scans merge
-global rows only from `~/.agents/skills`; other global agent skill directories
-remain available to Local Skills but are not shown as global project-detail
-rows.
+never from renderer-provided destination paths. Project detail scans return
+project-scoped rows only; the global local skills inventory is neither read nor
+merged, and global skills remain available through the Local Skills view.
 
 ## App Paths
 

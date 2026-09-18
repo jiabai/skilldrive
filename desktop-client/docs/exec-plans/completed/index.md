@@ -4,6 +4,8 @@
 
 | File | Outcome |
 |------|---------|
+| [2026-09-18-project-skill-project-only.md](2026-09-18-project-skill-project-only.md) | Project detail now lists project-scoped skill rows only; the `~/.agents/skills` global row merge, the `globalSnapshot` scan input, and the project-scan global inventory refresh were removed, while the catalog project target list including `.agents/skills` is unchanged |
+| [2026-09-18-agent-skill-delete.md](2026-09-18-agent-skill-delete.md) | Agent view skill rows gained a collapsed "More" menu whose inline expanded area holds Delete; deletion reuses the Local Skills IPC channel but sends only the clicked row key, so it stays scoped to one physical path and same-name copies under other agents survive; shared directories are disclosed but not blocked |
 | [2026-09-18-agent-skill-viewer.md](2026-09-18-agent-skill-viewer.md) | Sidebar gained an "Agent view" entry with a two-level read-only workspace: installed agents first, then the skills under that agent's owned target directory; renderer-only projection over the detection snapshot and local skill inventory, with no new IPC, backend, or persistence surface |
 | [2026-09-02-github-actions-release-packaging.md](2026-09-02-github-actions-release-packaging.md) | GitHub Actions workflow now builds Windows NSIS installer, per-architecture macOS dmg files, and the Linux CLI tarball, and creates a draft GitHub Release with all artifacts on `v*` tag push; validated end-to-end with the v0.1.5 release |
 | [2026-09-02-github-actions-release-packaging-tasks.md](2026-09-02-github-actions-release-packaging-tasks.md) | Completed task checklist for the GitHub Actions release packaging workflow |

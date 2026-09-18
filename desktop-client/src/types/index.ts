@@ -217,7 +217,7 @@ export interface ProjectAgentTarget {
   skillLayout?: AgentSkillLayout
 }
 
-export type ProjectSkillSource = "project" | "global"
+export type ProjectSkillSource = "project"
 
 export interface ProjectSkillRow {
   rowKey: string
@@ -228,7 +228,7 @@ export interface ProjectSkillRow {
   agentIds: AgentId[]
   sourceDisplayNames: string[]
   skillPath: string
-  relativePath: string | null
+  relativePath: string
   validationState: LocalSkillValidationState
   validationMessage: string | null
 }

@@ -260,7 +260,17 @@ export const enUSDictionary = {
       "invalid-skill-name": "Invalid skill name",
       unreadable: "Unreadable",
       "not-directory": "Not a directory"
-    }
+    },
+    showMore: "More",
+    showLess: "Less",
+    delete: "Delete",
+    deleting: "Deleting...",
+    deleteConfirmTitle: "Delete skill",
+    deleteConfirmDescription: (name: string) => `This will permanently delete '${name}' from disk.`,
+    deleteConfirmWarning: "This action cannot be undone. The following path will be permanently removed from disk:",
+    deleteConfirmSharedNotice: (value: string) =>
+      `This directory is shared with ${value}. Those agents will lose this skill as well.`,
+    deleteConfirmButton: "Delete"
   },
   projectsView: {
     eyebrow: "",
@@ -305,8 +315,7 @@ export const enUSDictionary = {
     skillCount: (count: number) => `${count} skill${count === 1 ? "" : "s"}`,
     targetCount: (count: number) => `${count} project target${count === 1 ? "" : "s"}`,
     sourceLabels: {
-      project: "Project",
-      global: "Global"
+      project: "Project"
     },
     validationStateLabels: {
       valid: "Valid",

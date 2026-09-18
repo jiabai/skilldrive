@@ -89,6 +89,13 @@
   `install` requires `--overwrite` for existing destinations; `sync` requires
   tracked CLI sync state or `--overwrite-untracked` for same-name untracked
   local skills.
+- Desktop local skill deletion resolves each target from a freshly refreshed
+  inventory snapshot inside the main process; the renderer sends only row keys
+  and never absolute paths. Both the Local Skills and Agent Skills entry points
+  then delete the resolved `packageRootPath` directly, with no trash and no
+  containment check against the owning agent target root. This gap is tracked in
+  `exec-plans/tech-debt-tracker.md` and should be closed with one shared guard
+  covering both entry points.
 - Removing a project from the Projects view deletes only the
   `config/projects.json` record. It must not delete project files or skill
   directories.

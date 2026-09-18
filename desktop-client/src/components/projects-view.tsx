@@ -229,10 +229,10 @@ export function ProjectsView({
         <div className="update-item__header">
           <div>
             <h3>{label}</h3>
-            <span className="muted mono">{copy.path(row.relativePath ?? row.skillPath)}</span>
+            <span className="muted mono">{copy.path(row.relativePath)}</span>
           </div>
           <div className="update-item__actions">
-            <Badge tone={row.source === "project" ? "accent" : "neutral"}>
+            <Badge tone="accent">
               {copy.sourceLabels[row.source]}
             </Badge>
             <Badge tone={validationTone(row)}>
