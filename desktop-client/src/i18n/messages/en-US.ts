@@ -38,7 +38,7 @@ export const enUSDictionary = {
       localSkills: "Local Skills",
       updates: "Updates",
       projects: "Projects",
-      agentSkills: "Agent view"
+      agentSkills: "Agent"
     },
     bridgeStatus: {
       unavailable: "Desktop bridge unavailable",
