@@ -38,7 +38,7 @@ export const zhCNDictionary = {
       localSkills: "全局",
       updates: "更新",
       projects: "项目",
-      agentSkills: "Agent 视角"
+      agentSkills: "Agent"
     },
     bridgeStatus: {
       unavailable: "桌面桥接不可用",
