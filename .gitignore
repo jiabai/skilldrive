@@ -2,6 +2,7 @@
 .trae
 .claude/
 .codebuddy/
+.workbuddy/
 .worktrees/
 .env*
 !.env.example
