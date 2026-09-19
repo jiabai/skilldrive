@@ -1166,7 +1166,7 @@ describe("App", () => {
       "Updates",
       "Local Skills",
       "Projects",
-      "Agent view"
+      "Agent"
     ])
 
     fireEvent.click(within(navigation).getByRole("button", { name: "Local Skills" }))
@@ -1370,7 +1370,7 @@ describe("App", () => {
       "Updates",
       "Local Skills",
       "Projects",
-      "Agent view"
+      "Agent"
     ])
 
     fireEvent.click(within(navigation).getByRole("button", { name: "Projects" }))
