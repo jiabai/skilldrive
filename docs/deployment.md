@@ -545,6 +545,20 @@ Only restart the affected service for:
 - Nginx-only config changes: test and reload Nginx
 - backend-only code changes: restart or hot-reload the backend according to the backend deployment path
 
+### 6. ICP filing footer is owned by the frontend source
+
+The filing number `京ICP备2025130312号-2` is rendered by `frontend/src/components/app/site-footer.tsx`. It appears on the landing page, the public help route, and the authenticated console shell, and it is deliberately kept out of the i18n dictionaries because a filing number is fixed legal text.
+
+A temporary Nginx `sub_filter` injection in `/etc/nginx/conf.d/8xf-pro.conf` covered this gap while the deployed frontend build predated `SiteFooter`. That patch was retired on 2026-09-26, in the same release that first shipped the component, and the host config now proxies without rewriting the response body.
+
+Verify that the filing number appears exactly once on the landing page:
+
+```bash
+curl -sS https://8xf.pro/ | grep -c "京ICP备2025130312号-2"
+```
+
+Keep the frontend source as the single owner. Reintroducing an Nginx level injection on top of it makes the landing page render two footers.
+
 ## SQLite vs PostgreSQL
 
 ### SQLite
@@ -584,6 +598,7 @@ If you switch to PostgreSQL, update `DATABASE_URL` and add a `db` service to Com
 - set `LOCAL_UID` and `LOCAL_GID` to match the host user if `1000:1000` is not writable
 - use PostgreSQL if this is not a low-traffic single-node deployment
 - rebuild web UI whenever `NEXT_PUBLIC_API_BASE_URL` changes; for non-Docker standalone deployments, also restart `skilldrive-nextjs.service`
+- on the `8xf.pro` host, keep the ICP filing footer in the frontend source; the temporary Nginx injection was retired on 2026-09-26 and must not be reintroduced
 
 ## Common Mistakes
 
@@ -610,6 +625,9 @@ If you switch to PostgreSQL, update `DATABASE_URL` and add a `db` service to Com
 
 - Editing a catalog under `shared/` but skipping `python scripts/sync_shared_catalogs.py --write`
   Backend and frontend builds use their committed local copies, so the new source catalog will not take effect until the synced runtime files are regenerated.
+
+- Reintroducing an Nginx `sub_filter` that injects the ICP filing number
+  The frontend `SiteFooter` already renders it, so the landing page ends up with two footers.
 
 - Assuming README already contains the full production guide
   Use this file for Linux deployment details.
