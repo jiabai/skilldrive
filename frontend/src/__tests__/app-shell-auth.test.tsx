@@ -111,6 +111,34 @@ describe("AppShell auth guard", () => {
     expect(screen.queryByRole("link", { name: "京ICP备2025130312号-2" })).not.toBeInTheDocument()
   })
 
+  it.each(["/login/ldap", "/login/sso/callback"])(
+    "renders the pre-auth route %s without redirecting when no tokens are stored",
+    async (route) => {
+      pathnameMock = route
+      replaceMock.mockClear()
+      refreshMock.mockClear()
+      window.localStorage.removeItem("skilldrive.tokens")
+
+      renderWithRuntimeConfig(<AppShell>pre-auth surface</AppShell>)
+
+      expect(await screen.findByText("pre-auth surface")).toBeInTheDocument()
+      expect(replaceMock).not.toHaveBeenCalled()
+    }
+  )
+
+  it("redirects a signed-in visitor away from the LDAP pre-auth route", async () => {
+    pathnameMock = "/login/ldap"
+    replaceMock.mockClear()
+    refreshMock.mockClear()
+    window.localStorage.setItem("skilldrive.tokens", JSON.stringify({ access_token: "token", refresh_token: "refresh" }))
+
+    renderWithRuntimeConfig(<AppShell>pre-auth surface</AppShell>)
+
+    await waitFor(() => {
+      expect(replaceMock).toHaveBeenCalledWith("/dashboard")
+    })
+  })
+
   it("redirects to login when not authenticated", async () => {
     replaceMock.mockClear()
     refreshMock.mockClear()

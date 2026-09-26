@@ -42,6 +42,8 @@
 | `local-skill-upload-description-limit-plan.md` | Client ZIP uploads now cap external descriptions at the existing 500-character summary limit before Skill/SkillVersion persistence; strict create/append regression tests reproduce the old 500 and pass after the fix, with backend/desktop/docs gates passing |
 | `local-skill-upload-description-limit-tasks.md` | Completed checklist for diagnosing and fixing long-description upload failures, including archive preservation and debug-log cleanup |
 | `desktop-sidebar-collapse-toggle-plan.md` | Desktop client manual sidebar collapse/expand toggle completed: ChevronsLeft/ChevronsRight button in brand area, hover-reveal, localStorage (`skilldrive:sidebarCollapsed`) persistence, `.app-shell--collapsed` icon-rail class, narrow-screen (`<=1099px`) button suppression; 3 new regression tests, 231 tests passing, build and docs gates clean |
+| `pre-auth-route-access-plan.md` | `AppShell` auth route predicate no longer uses exact matching for `/login`, so `/login/ldap` and `/login/sso/callback` render anonymously; 67 frontend tests, lint, typecheck, build, and docs gates passing |
+| `pre-auth-route-access-tasks.md` | 8-task checklist completed: failing tests first, one-line predicate fix, focused and full frontend gates, docs gate, local commit, and plan archival |
 
 ## Notes
 

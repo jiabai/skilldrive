@@ -23,6 +23,7 @@ Product specs describe user-visible intent and boundaries for a feature before o
 | `2026-08-25-skill-delete-confirmation.md` | Confirmation dialog with destructive confirm for Local Skills delete action: full paths, agent ownership, type-to-confirm |
 | `2026-08-28-desktop-sidebar-collapse-toggle.md` | Desktop client manual sidebar collapse/expand toggle button: hover-revealed, localStorage persistence, narrow-screen suppression, icon-rail parity with existing auto-collapse |
 | `2026-09-02-github-actions-release-packaging.md` | CI-built desktop release artifacts: GitHub Actions workflow producing the Windows installer and Linux CLI tarball and attaching them to a tag's GitHub Release |
+| `2026-09-26-pre-auth-route-access.md` | Anonymous access to pre-auth routes: `/login/ldap` and `/login/sso/callback` must render without being bounced to `/login` |
 
 ## Guidelines
 

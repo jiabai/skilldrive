@@ -40,7 +40,9 @@ import { useI18n } from "@/i18n/use-i18n"
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const isAuthRoute = pathname === "/login" || pathname === "/register"
+  // 登录前路由：/register 无子路由，/login 下的 LDAP 与 SSO 回调页必须匿名可达。
+  const isAuthRoute =
+    pathname === "/register" || pathname === "/login" || pathname.startsWith("/login/")
   const isPublicRoute = pathname === "/" || pathname === "/help"
   // 首页由 LandingPage 自带页脚（需贴在首屏底部），此处排除以免重复渲染。
   const isLandingRoute = pathname === "/"
