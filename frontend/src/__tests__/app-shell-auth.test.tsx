@@ -90,6 +90,27 @@ describe("AppShell auth guard", () => {
     expect(replaceMock).not.toHaveBeenCalled()
   })
 
+  it("renders the ICP filing footer on the public help route", async () => {
+    pathnameMock = "/help"
+    replaceMock.mockClear()
+    window.localStorage.removeItem("skilldrive.tokens")
+
+    renderWithRuntimeConfig(<AppShell>help center</AppShell>)
+
+    expect(await screen.findByRole("link", { name: "京ICP备2025130312号-2" })).toHaveAttribute("href", "https://beian.miit.gov.cn/")
+  })
+
+  it("leaves the landing route footer to the landing page itself", async () => {
+    pathnameMock = "/"
+    replaceMock.mockClear()
+    window.localStorage.removeItem("skilldrive.tokens")
+
+    renderWithRuntimeConfig(<AppShell>public landing</AppShell>)
+
+    expect(await screen.findByText("public landing")).toBeInTheDocument()
+    expect(screen.queryByRole("link", { name: "京ICP备2025130312号-2" })).not.toBeInTheDocument()
+  })
+
   it("redirects to login when not authenticated", async () => {
     replaceMock.mockClear()
     refreshMock.mockClear()

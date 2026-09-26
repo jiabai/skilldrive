@@ -6,6 +6,7 @@ import { ArrowRight, Boxes, CheckCircle2, Database, KeyRound, Laptop, Layers3, S
 
 import { Button } from "@/components/ui/button"
 import { LanguageToggle } from "@/components/app/language-toggle"
+import { SiteFooter } from "@/components/app/site-footer"
 import { ThemeToggle } from "@/components/app/theme-toggle"
 import { useI18n } from "@/i18n/use-i18n"
 import { cn } from "@/lib/utils"
@@ -134,6 +135,8 @@ export function LandingPage({ currentUser: propsCurrentUser }: LandingPageProps)
         </section>
 
         <CapabilityProofStrip />
+
+        <SiteFooter className="mt-2 border-t border-border/70 pt-5 pb-1" />
       </div>
     </div>
   )

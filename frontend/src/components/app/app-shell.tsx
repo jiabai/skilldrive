@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import type { User } from "@/types"
 import { ThemeToggle } from "@/components/app/theme-toggle"
 import { LanguageToggle } from "@/components/app/language-toggle"
+import { SiteFooter } from "@/components/app/site-footer"
 import { Button } from "@/components/ui/button"
 import { CurrentUserProvider } from "./current-user-context"
 import {
@@ -41,6 +42,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const isAuthRoute = pathname === "/login" || pathname === "/register"
   const isPublicRoute = pathname === "/" || pathname === "/help"
+  // 首页由 LandingPage 自带页脚（需贴在首屏底部），此处排除以免重复渲染。
+  const isLandingRoute = pathname === "/"
   const { config } = useRuntimeConfig()
   const { dictionary } = useI18n()
   const { appShell, navigation } = dictionary
@@ -133,6 +136,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="min-h-screen">
         {children}
       </main>
+      {isLandingRoute ? null : (
+        <SiteFooter className="container mx-auto max-w-screen-xl border-t border-border/70 px-6 py-5 3xl:max-w-screen-2xl 4k:max-w-screen-3xl" />
+      )}
     </CurrentUserProvider>
   }
 
@@ -318,6 +324,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main id="main-content" className="container mx-auto max-w-screen-xl px-6 py-8 3xl:max-w-screen-2xl 4k:max-w-screen-3xl" tabIndex={-1}>
         {children}
       </main>
+
+      <SiteFooter className="container mx-auto max-w-screen-xl border-t border-border/70 px-6 py-5 3xl:max-w-screen-2xl 4k:max-w-screen-3xl" />
     </div>
   )
 }

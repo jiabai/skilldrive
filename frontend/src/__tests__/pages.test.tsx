@@ -124,6 +124,12 @@ describe("console pages", () => {
     expect(screen.getByRole("link", { name: "公共 Skills" })).toHaveAttribute("href", "/public-skills")
   })
 
+  it("shows the ICP filing number linked to the MIIT registry on the landing page", () => {
+    renderWithRuntimeConfig(<HomePage />)
+
+    expect(screen.getByRole("link", { name: "京ICP备2025130312号-2" })).toHaveAttribute("href", "https://beian.miit.gov.cn/")
+  })
+
   it("shows auth-only helper when email otp is the only login method", () => {
     renderWithRuntimeConfig(<LoginPage />)
     expect(screen.getByText("仅用于认证")).toBeInTheDocument()
