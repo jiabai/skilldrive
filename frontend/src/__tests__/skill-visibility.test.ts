@@ -1,4 +1,4 @@
-import generatedSkillVisibilities from "@/generated/skill-visibilities.json"
+import generatedSkillVisibilitiesJson from "@/generated/skill-visibilities.json"
 import {
   DEFAULT_SKILL_VISIBILITY,
   SKILL_VISIBILITY_LABELS,
@@ -8,6 +8,13 @@ import {
   isSkillVisibility,
   isWritableSkillVisibility,
 } from "@/lib/skill-visibility"
+
+const generatedSkillVisibilities = generatedSkillVisibilitiesJson as {
+  default: string
+  values: readonly string[]
+  writable: readonly string[]
+  labels: Record<string, string>
+}
 
 describe("skill visibility catalog", () => {
   it("derives exported constants from the generated catalog", () => {

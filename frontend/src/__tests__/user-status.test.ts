@@ -1,4 +1,4 @@
-import generatedUserStatuses from "@/generated/user-statuses.json"
+import generatedUserStatusesJson from "@/generated/user-statuses.json"
 import {
   DEFAULT_USER_STATUS,
   USER_STATUS_LABELS,
@@ -6,6 +6,12 @@ import {
   USER_STATUS_VALUES,
   isUserStatus,
 } from "@/lib/user-status"
+
+const generatedUserStatuses = generatedUserStatusesJson as {
+  default: string
+  statuses: readonly string[]
+  labels: Record<string, string>
+}
 
 describe("user status catalog", () => {
   it("derives exported constants from the generated catalog", () => {
